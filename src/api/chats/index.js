@@ -29,7 +29,7 @@ chatsRouter.post('/:userId', isSignedIn, async (req, res, next) => {
 })
 chatsRouter.get('/', isSignedIn, async (req, res, next) => {
     try {
-        const chats = await Chats.find({ members: req.user._id}).populate('members').populate('messages')
+        const chats = await Chats.find({ members: req.user._id}).populate('members')
         
         if(chats) {
             res.send(chats)
@@ -40,9 +40,24 @@ chatsRouter.get('/', isSignedIn, async (req, res, next) => {
         next(error)
     }
 })
-chatsRouter.get('/', async (req, res, next) => {
+chatsRouter.get('/:chatId', isSignedIn, async (req, res, next) => {
     try {
+        const isChatMember = await Chats.isMember(req.user._id, req.params.chatId)
         
+        if(isChatMember) {
+            const foundChat = await Chats.findById(req.params.chatId).populate({
+                path: 'messages',
+                populate: {
+                    path: 'sender',
+                    model: 'User',
+                    select: 'username'
+                }
+            }).populate('members')
+
+            res.status(200).send({ chat: foundChat })
+        } else {
+            res.status(401).send( {message: 'You are not part of this chat'} )
+        }
     } catch (error) {
         next(error)
     }
