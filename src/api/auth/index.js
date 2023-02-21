@@ -22,7 +22,7 @@ authRouter.post("/signup", async (req, res, next) => {
     next(error);
   }
 });
-authRouter.get("/signin", async (req, res, next) => {
+authRouter.post("/signin", async (req, res, next) => {
   try {
     const { email, password } = req.body;
 
