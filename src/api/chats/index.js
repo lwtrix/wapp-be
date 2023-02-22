@@ -29,7 +29,8 @@ chatsRouter.post('/:userId', isSignedIn, async (req, res, next) => {
 })
 chatsRouter.get('/', isSignedIn, async (req, res, next) => {
     try {
-        const chats = await Chats.find({ members: req.user._id}).populate('members')
+        const chats = await Chats.find({ members: req.user._id },
+            { messages: { $slice: -1 }, _id: 0 }).populate('messages').populate('members')
         
         if(chats) {
             res.send(chats)
