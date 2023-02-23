@@ -17,19 +17,21 @@ import {
 const port = process.env.PORT || 3001;
 const server = express();
 
-const accessOrigins = [process.env.FE_DEV_URL]
+const accessOrigins = [process.env.FE_DEV_URL];
 
 const corsOptions = {
   origin: (origin, corsNext) => {
-      console.log(origin)
+    console.log(origin);
     if (!origin || accessOrigins.indexOf(origin) !== -1) {
-      corsNext(null, true)
+      corsNext(null, true);
     } else {
-      corsNext(createError(400, `Access to server denied, your origin: ${origin}`))
+      corsNext(
+        createError(400, `Access to server denied, your origin: ${origin}`)
+      );
     }
   },
-}
-
+};
+//cors
 server.use(cors(corsOptions));
 server.use(express.json());
 
